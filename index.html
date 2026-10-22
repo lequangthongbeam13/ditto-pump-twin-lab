@@ -3,37 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
 <title>Ditto Pump Twin Lab</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: one "plant floor" stage (App, Ditto twin, Pump) on top, scenario controls + request log below. Matches the team's v2 deck: white, navy + sky blue, thin lines, Lato. */
+/* Layout: one "plant floor" stage (App, Ditto twin, Pump) on top, scenario controls + request log below. White, navy + sky blue, thin lines, Arial. */
 :root{
   --bg:#ffffff; --surface:#f5f8fc; --line:#d5dde7; --ink:#1e2a36; --muted:#66768a;
   --navy:#1f497d; --sky:#468cd0; --sky-soft:#e3eefa;
   --ok:#2f8a57; --ok-soft:#e2f3e9; --warn:#b5761b; --warn-soft:#fbf0dc; --bad:#be463c; --bad-soft:#fbe5e2;
   --packet-text:#ffffff;
-  --f-body:'Lato','Helvetica Neue',Arial,sans-serif; --f-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --f-body:Arial,'Helvetica Neue',Helvetica,sans-serif; --f-mono:Menlo,Consolas,'Courier New',monospace;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#0f1823; --surface:#162231; --line:#2a3a4d; --ink:#e3ebf4; --muted:#93a4b8;
-  --navy:#8fb7e8; --sky:#5aa2e6; --sky-soft:#1b3550;
-  --ok:#5cc28a; --ok-soft:#173528; --warn:#e2ab55; --warn-soft:#3a2c14; --bad:#ef7d72; --bad-soft:#3d1d1a;
-  --packet-text:#0f1823; color-scheme:dark }}
-:root[data-theme="dark"]{
-  --bg:#0f1823; --surface:#162231; --line:#2a3a4d; --ink:#e3ebf4; --muted:#93a4b8;
-  --navy:#8fb7e8; --sky:#5aa2e6; --sky-soft:#1b3550;
-  --ok:#5cc28a; --ok-soft:#173528; --warn:#e2ab55; --warn-soft:#3a2c14; --bad:#ef7d72; --bad-soft:#3d1d1a;
-  --packet-text:#0f1823; color-scheme:dark }
+/* Always light, even when the phone/browser uses dark mode (projector + readability). */
+:root{color-scheme:only light}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
 .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
 header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px}
 .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--sky);font-weight:700}
-h1{margin:2px 0 0;font-weight:300;font-size:clamp(24px,3.4vw,34px);color:var(--navy);text-wrap:balance}
+h1{margin:2px 0 0;font-weight:400;font-size:clamp(24px,3.4vw,34px);color:var(--navy);text-wrap:balance}
 .sub{color:var(--muted);font-size:13.5px}
 .mono{font-family:var(--f-mono);font-size:12.5px}
 /* tabs */
@@ -80,6 +70,30 @@ h1{margin:2px 0 0;font-weight:300;font-size:clamp(24px,3.4vw,34px);color:var(--n
 .btn.primary{background:var(--navy);color:var(--bg)}
 .btn.danger{border-color:var(--bad);color:var(--bad)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
+.btn{transition:transform .08s,background .2s,opacity .2s}
+.btn:active{transform:scale(.96)}
+/* selected = the current state (current target, current role, active filter) */
+.btn.sel{background:var(--sky-soft);border-color:var(--sky);color:var(--navy);font-weight:700}
+/* running = the action you just tapped is still travelling */
+.btn.running{background:var(--navy);border-color:var(--navy);color:#fff;animation:run .8s ease-in-out infinite alternate}
+@keyframes run{to{opacity:.65}}
+body.busy .btn:not(.running){opacity:.45}
+/* on/off switch for the visitor grant */
+.btn.toggle.on{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.btn.toggle.off{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+.btn small{font-size:11px;font-weight:400}
+/* guide: one "Try this" step at a time, always visible */
+.guide{display:flex;gap:10px;align-items:center;background:var(--sky-soft);border-radius:6px;padding:10px 12px;font-size:14.5px;color:var(--ink)}
+.guide.done{background:var(--ok-soft)}
+.guide .n{font:700 12px var(--f-mono);color:var(--navy);white-space:nowrap}
+.guide.done .n{color:var(--ok)}
+.guide .txt{flex:1;min-width:0}
+.guide .nav{display:flex;gap:4px}
+.guide .nav button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--navy);border-radius:4px;padding:4px 9px;cursor:pointer}
+.guide .nav button:disabled{opacity:.35;cursor:default}
+.guide .go{border-color:var(--ok)!important;color:var(--ok)!important;font-weight:700}
+.guide.flash{animation:gflash .6s}
+@keyframes gflash{0%{background:var(--ok-soft)}100%{background:var(--sky-soft)}}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
 .seg button{font:inherit;font-size:13.5px;border:0;background:transparent;color:var(--ink);padding:8px 12px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--sky-soft);color:var(--navy);font-weight:700}
@@ -104,7 +118,10 @@ label.check{display:flex;gap:8px;align-items:center;font-size:14px}
 footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:10px}
 .dock{display:none}
 @media (max-width:820px){
-  body{padding-block:12px calc(150px + env(safe-area-inset-bottom,0px))}
+  body{padding-block:12px calc(230px + env(safe-area-inset-bottom,0px))}
+  #guideTop{display:none}
+  .guide{padding:8px 10px;font-size:13.5px;gap:8px}
+  .guide .nav button{padding:6px 10px}
   .wrap{gap:12px}
   header .sub:not(.mono){display:none}
   .tabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}
@@ -130,9 +147,9 @@ footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);paddin
     padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
   .dock-status{font:11.5px var(--f-mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .dock-status b{color:var(--ink)}
-  .dock-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:6px}
+  .dock-actions{display:flex;flex-direction:column;gap:6px}
+  .dock-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:6px}
   .dock-actions .btn{padding:11px 6px;font-size:13.5px;text-align:center}
-  .dock-actions .btn[aria-pressed="true"]{background:var(--sky-soft);border-color:var(--sky)}
 }
 @media (prefers-reduced-motion:reduce){ .packet{transition:none} .fcard.pulse{animation:none} }
 </style>
@@ -156,6 +173,8 @@ footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);paddin
     <button class="tab" role="tab" id="tab-policy" aria-selected="false" data-tab="policy">3 · Policy</button>
     <button class="tab" role="tab" id="tab-fleet" aria-selected="false" data-tab="fleet">4 · Fleet &amp; search</button>
   </nav>
+
+  <div class="guide" id="guideTop" aria-live="polite"></div>
 
   <section class="stage" id="stage" aria-label="App, Ditto twin and pump">
     <svg class="wire" id="wire" aria-hidden="true"></svg>
@@ -188,7 +207,7 @@ footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);paddin
           </g>
           <circle cx="62" cy="56" r="6" fill="var(--navy)"/>
           <rect x="108" y="34" width="46" height="42" fill="var(--sky-soft)" stroke="var(--navy)" stroke-width="2"/>
-          <text x="131" y="59" text-anchor="middle" font-size="11" fill="var(--navy)" font-family="Lato, sans-serif">motor</text>
+          <text x="131" y="59" text-anchor="middle" font-size="11" fill="var(--navy)" font-family="Arial, sans-serif">motor</text>
         </svg>
       </div>
       <div class="bigflow"><span id="pumpFlow">120</span> <span style="font-size:14px;font-weight:400">l/min</span></div>
@@ -205,7 +224,7 @@ footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);paddin
     </div>
   </section>
 
-  <div class="dock" id="dock" aria-label="Quick controls"><div class="dock-status" id="dockStatus">Ready</div><div class="dock-actions" id="dockActions"></div></div>
+  <div class="dock" id="dock" aria-label="Quick controls"><div class="guide" id="guideDock"></div><div class="dock-status" id="dockStatus">Ready</div><div class="dock-actions" id="dockActions"></div></div>
   <footer>Simulation built for the group talk "Introduction to Digital Twin Platforms" (AT00CK39, 28.10.2026). Behaviour follows the Eclipse Ditto docs: Feature, twin/live channel, Policy, Search/RQL. No real Ditto server is contacted.</footer>
 </div>
 
@@ -304,6 +323,7 @@ function render(){
       ${vis?`<span class="meta">${p.manufacturer} · ${p.serial} · ${p.location}</span>`:`<span class="hidden-field">attributes not returned (no READ on thing:/attributes)</span>`}`;
   }
   renderFleet();
+  if(typeof updateButtons==="function")updateButtons();
 }
 function flash(id){const el=$(id);el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),700);}
 
@@ -353,24 +373,29 @@ async function readTwin(){
 }
 async function readLive(){
   if(busy)return;busy=true;const p=P();const path=`/api/2/things/${tid(p)}/features/flow/properties?channel=live&timeout=3s`;
-  await send("nodeApp","nodeTwin","GET","",14);
-  if(!canRead("features/flow")){log("GET",path,"404 Not Found","bad",role);busy=false;return;}
+  // The app never talks to the pump directly: a live message still enters through Ditto,
+  // but Ditto only FORWARDS it. It does not answer from the twin and does not store the reply.
+  await send("nodeApp","nodeTwin","GET live","",14);
+  if(!canRead("features/flow")){log("GET",path,"404 Not Found","bad",role);await send("nodeTwin","nodeApp","404","err",-14);busy=false;return;}
+  const fwd=()=>{$("syncChip").className="chip info";$("syncChip").textContent="live: Ditto only forwards · not stored";};
+  fwd();
   await send("nodeTwin","nodePump","live?","cmd",14);
   if(!p.online){
     $("syncChip").className="chip warn";$("syncChip").textContent="waiting for the pump… (3 s)";
     await wait(reduce?300:2200);log("GET",path,"408 Request Timeout · the pump did not answer","bad","live channel");
     render();await send("nodeTwin","nodeApp","408","err",-14);busy=false;return;
   }
-  await send("nodePump","nodeTwin",String(p.rep),"",-14);
-  log("GET",path,`200 OK · {"litersPerMin":${p.rep}} · answered by the pump, not stored`,"ok","live channel");
-  await send("nodeTwin","nodeApp",String(p.rep),"",-14);busy=false;
+  fwd();
+  await send("nodePump","nodeTwin",p.rep+" from pump","",-14);
+  log("GET",path,`200 OK · {"litersPerMin":${p.rep}} · answered by the pump, Ditto only forwarded it (twin not changed)`,"ok","live channel");
+  await send("nodeTwin","nodeApp",p.rep+" from pump","",-14);render();busy=false;
 }
 async function setOnline(on){
   if(busy)return;const p=P();p.online=on;
   log("NET",`${p.id} ${on?"reconnected":"lost its network"}`,on?"connection open":"connection closed","warn","pump");
   render();
   if(on&&p.queued){busy=true;await wait(400);log("NOTE","pump reads the waiting target","catching up","ok","pump");await pumpAct(p);busy=false;}
-  else if(on){busy=true;await pumpReport(p,p.rep,true);busy=false;}
+  else if(on){busy=true;log("NOTE","after reconnecting, the pump reports its current value once","so the twin is fresh again (same value, new _modified time)","ok","pump");await pumpReport(p,p.rep,true);busy=false;}
   renderPanel();
 }
 
@@ -409,36 +434,31 @@ function renderFleet(){
 }
 
 /* ---------- panels ---------- */
+// Every button (desktop panel AND phone dock) uses data-act, so both versions behave the same.
+const B=(a,l,cls)=>`<button class="btn ${cls||""}" data-act="${a}">${l}</button>`;
+const grantBtn=()=>B("grant",`Visitor READ: ${policy.visitorReadFlow?"on":"off"}`,"toggle");
+const netBtn=()=>B("net",P().online?"Disconnect":"Reconnect",P().online?"danger":"primary");
 const panels={
  desired:()=>`<h2>Reported and desired</h2>
   <p>properties is what the pump reports. desiredProperties is the target we set. Ditto stores the target, and the pump's own software does the work.</p>
-  <div class="row actions"><button class="btn primary" id="b150">Set target 150</button><button class="btn" id="b100">Set target 100</button><button class="btn" id="b180">Set target 180</button></div>
-  <div class="try"><b>Try this</b><ol><li>Set 150 and watch the two arrows: app → Ditto, then Ditto → pump.</li><li>Set 180. pump-01 can only reach 160, so properties stops at 160.</li></ol></div>
+  <div class="row actions">${B("t100","Target 100")}${B("t150","Target 150")}${B("t180","Target 180")}</div>
   <div class="takeaway">The twin never pretends. If the pump cannot reach the target, properties shows what is really happening.</div>`,
  offline:()=>`<h2>Pump offline: twin vs live</h2>
-  <p>Twin channel: Ditto answers from its stored copy. Live channel: the request goes through Ditto to the pump, and the pump answers.</p>
-  <div class="row actions"><button class="btn ${P().online?"danger":"primary"}" id="bNet">${P().online?"Disconnect pump":"Reconnect pump"}</button></div>
-  <div class="row actions"><button class="btn" id="bTwin">Read via twin</button><button class="btn" id="bLive">Read via live</button><button class="btn" id="bT2">Set target 150</button></div>
-  <div class="try"><b>Try this</b><ol><li>Disconnect the pump.</li><li>Read via twin: you still get the last value and its time.</li><li>Read via live: after 3 seconds you get 408 timeout.</li><li>Set target 150, then reconnect. The pump picks up the waiting target.</li></ol></div>
+  <p>Twin channel: Ditto answers from its stored copy. Live channel: the request goes through Ditto to the pump, and the pump answers. Ditto only forwards it.</p>
+  <div class="row actions">${netBtn()}${B("twin","Twin read")}${B("live","Live read")}${B("t150","Target 150")}</div>
   <div class="takeaway">Use twin for "what was the last value". Use live for something that only makes sense right now.</div>`,
  policy:()=>`<h2>Policy: who can see which part</h2>
   <p>By default nobody has rights. The policy ${NS}:pump-policy gives the maintenance team READ and WRITE on <span class="mono">thing:/</span> and the showroom visitor READ on <span class="mono">thing:/features/flow</span> only.</p>
-  <div class="row actions"><span class="seg" role="group" aria-label="Role"><button id="rM" aria-pressed="${role==="maintenance"}">Maintenance team</button><button id="rV" aria-pressed="${role==="visitor"}">Showroom visitor</button></span></div>
-  <div class="row actions"><button class="btn" id="bT3">Set target 150</button><button class="btn" id="bTw3">Read flow</button></div>
-  <label class="check actions"><input type="checkbox" id="cbFlow" ${policy.visitorReadFlow?"checked":""}> Visitor entry: grant READ on <span class="mono">thing:/features/flow</span></label>
-  <div class="try"><b>Try this</b><ol><li>Switch to Showroom visitor. The app no longer gets the serial number or location.</li><li>Set target 150: 403 Forbidden.</li><li>Untick the grant. All six pumps disappear for the visitor at once, because they share one policy.</li></ol></div>
+  <div class="row actions"><span class="sub">Who is using the app?</span>${B("roleM","Maintenance")}${B("roleV","Visitor")}</div>
+  <div class="row actions"><span class="sub">Try an action:</span>${B("t150","Target 150")}${B("twin","Read flow")}</div>
+  <div class="row actions"><span class="sub">Change the policy:</span>${grantBtn()}<span class="mono sub">thing:/features/flow</span></div>
   <div class="takeaway">One policy, many twins: change it once and every pump that points to it follows.</div>
   <div class="fleet" id="fleet"></div>`,
  fleet:()=>`<h2>Fleet and search</h2>
   <p>Six pumps report every few seconds. Search runs across all twins at once, with an RQL filter.</p>
-  <label for="rql" class="sub">filter</label>
+  <label for="rql" class="sub">filter (type your own and press Enter)</label>
   <input type="text" id="rql" value="${esc(filterStr)}" placeholder='eq(attributes/location,"Hall 2")' spellcheck="false" autocomplete="off">
-  <div class="presets actions">
-    <button data-q='eq(attributes/location,"Hall 2")'>eq(attributes/location,"Hall 2")</button>
-    <button data-q='gt(features/flow/properties/litersPerMin,120)'>gt(features/flow/properties/litersPerMin,120)</button>
-    <button data-q='and(eq(attributes/manufacturer,"ACME"),lt(features/flow/properties/litersPerMin,100))'>and(eq(…manufacturer,"ACME"),lt(…litersPerMin,100))</button>
-    <button data-q=''>clear</button>
-  </div>
+  <div class="row actions">${B("qHall",'Hall 2 <small class="mono">eq(attributes/location,"Hall 2")</small>')}${B("qGt",'&gt; 120 <small class="mono">gt(…/litersPerMin,120)</small>')}${B("qAcme",'ACME &lt; 100 <small class="mono">and(eq(…manufacturer,"ACME"),lt(…,100))</small>')}${B("qClr","Clear")}</div>
   <div class="sub" id="rqlMsg"></div>
   <div class="fleet" id="fleet"></div>
   <div class="takeaway">Attributes are indexed for search: "all pumps in Hall 2" is one request, not six. Tap a pump to put it on the stage.</div>`
@@ -448,43 +468,95 @@ function setGrant(v){policy.visitorReadFlow=v;
 function setRole(r){role=r;log("AUTH",r==="maintenance"?"subject nginx:maintenance-team":"subject nginx:showroom",r==="maintenance"?"entry: maintenance":"entry: visitor","ok","");renderPanel();render();}
 function runFilter(str){filterStr=str.trim();const q=$("rql");if(q)q.value=filterStr;const msg=$("rqlMsg");
   if(!filterStr){if(msg)msg.textContent="";render();return;}
-  try{parseRQL(filterStr);const n=matches().filter(Boolean).length;if(msg)msg.textContent=`${n} of 6 twins match`;
+  try{parseRQL(filterStr);const n=matches().filter(Boolean).length;if(msg)msg.textContent=`${n} of 6 twins match`+(canRead("features/flow")?"":" · you are a Visitor without READ (see tab 3)");
     log("GET",`/api/2/search/things?filter=${filterStr}`,`200 OK · ${n} items`,"ok",role);}
   catch(e){if(msg)msg.textContent="Filter not understood: "+e+". Try one of the examples below.";}
   render();}
+const Q={qHall:'eq(attributes/location,"Hall 2")',qGt:'gt(features/flow/properties/litersPerMin,120)',qAcme:'and(eq(attributes/manufacturer,"ACME"),lt(features/flow/properties/litersPerMin,100))'};
 const acts={t100:()=>setTarget(100),t150:()=>setTarget(150),t180:()=>setTarget(180),net:()=>setOnline(!P().online),twin:readTwin,live:readLive,
   roleM:()=>setRole("maintenance"),roleV:()=>setRole("visitor"),grant:()=>{setGrant(!policy.visitorReadFlow);renderPanel();},
-  qHall:()=>runFilter('eq(attributes/location,"Hall 2")'),qGt:()=>runFilter('gt(features/flow/properties/litersPerMin,120)'),
-  qAcme:()=>runFilter('and(eq(attributes/manufacturer,"ACME"),lt(features/flow/properties/litersPerMin,100))'),qClr:()=>runFilter("")};
+  qHall:()=>runFilter(Q.qHall),qGt:()=>runFilter(Q.qGt),qAcme:()=>runFilter(Q.qAcme),qClr:()=>runFilter("")};
 function dockHTML(){
-  const b=(a,l,extra)=>`<button class="btn ${extra||""}" data-act="${a}">${l}</button>`;
-  if(tab==="desired")return b("t100","Target 100")+b("t150","Target 150","primary")+b("t180","Target 180");
-  if(tab==="offline")return b("net",P().online?"Disconnect":"Reconnect",P().online?"danger":"primary")+b("twin","Twin read")+b("live","Live read")+b("t150","Target 150");
-  if(tab==="policy")return `<button class="btn" data-act="roleM" aria-pressed="${role==="maintenance"}">Maintenance</button><button class="btn" data-act="roleV" aria-pressed="${role==="visitor"}">Visitor</button>`
-    +b("t150","Target 150")+`<button class="btn" data-act="grant" aria-pressed="${policy.visitorReadFlow}">Visitor READ ${policy.visitorReadFlow?"on":"off"}</button>`;
-  return b("qHall","Hall 2")+b("qGt","&gt; 120")+b("qAcme","ACME &lt; 100")+b("qClr","Clear");
+  const r=x=>`<div class="dock-row">${x}</div>`;
+  if(tab==="desired")return r(B("t100","Target 100")+B("t150","Target 150")+B("t180","Target 180"));
+  if(tab==="offline")return r(netBtn()+B("twin","Twin read")+B("live","Live read")+B("t150","Target 150"));
+  if(tab==="policy")return r(B("roleM","Maintenance")+B("roleV","Visitor"))+r(B("t150","Target 150")+B("twin","Read flow")+grantBtn());
+  return r(B("qHall","Hall 2")+B("qGt","&gt; 120")+B("qAcme","ACME &lt; 100")+B("qClr","Clear"));
 }
+
+/* ---------- button states: selected (current state) + running (action in progress) ---------- */
+let runningAct=null;
+function updateButtons(){
+  const p=P();
+  document.body.classList.toggle("busy",!!runningAct);
+  document.querySelectorAll("[data-act]").forEach(b=>{
+    const a=b.dataset.act;let sel=false;
+    if(tab==="desired"&&/^t\d+$/.test(a))sel=p.des===+a.slice(1);
+    if(a==="roleM")sel=role==="maintenance";
+    if(a==="roleV")sel=role==="visitor";
+    if(Q[a])sel=filterStr===Q[a];
+    b.classList.toggle("sel",sel&&a!==runningAct);
+    b.classList.toggle("running",a===runningAct);
+    if(a==="grant"){b.classList.toggle("on",policy.visitorReadFlow);b.classList.toggle("off",!policy.visitorReadFlow);}
+    b.setAttribute("aria-pressed",sel);
+  });
+}
+async function doAct(a){
+  if(runningAct||busy||!acts[a])return;
+  runningAct=a;updateButtons();
+  try{await acts[a]();}finally{runningAct=null;}
+  if(a==="net"||a==="grant"||a.startsWith("role"))renderPanel();
+  updateButtons();guideCheck(a);
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(b)doAct(b.dataset.act);});
+
+/* ---------- guide: "Try this", one step at a time, always on screen ---------- */
+const TABS=["desired","offline","policy","fleet"];
+const guides={
+ desired:[["t150","Tap <b>Target 150</b>. Watch the arrows: app → Ditto, then Ditto → pump. The pump adjusts itself."],
+          ["t180","Tap <b>Target 180</b>. pump-01 can only reach 160, so properties stops at 160."],
+          ["t100","Tap <b>Target 100</b>. properties follows the target down."]],
+ offline:[["net","Tap <b>Disconnect</b>. The pump goes offline."],
+          ["twin","Tap <b>Twin read</b>. Ditto still answers with the last value and its time."],
+          ["live","Tap <b>Live read</b>. Ditto forwards it to the pump, nobody answers: 408 timeout."],
+          ["t150","Tap <b>Target 150</b>. The target waits in the twin."],
+          ["net","Tap <b>Reconnect</b>. The pump picks up the waiting target."]],
+ policy:[["roleV","Tap <b>Visitor</b>. The app no longer gets the serial number or location."],
+          ["t150","Tap <b>Target 150</b>. 403 Forbidden: a visitor has no WRITE."],
+          ["grant","Tap <b>Visitor READ</b> to turn it off. All six pumps disappear for the visitor at once: they share one policy."],
+          ["roleM","Tap <b>Maintenance</b> to get full access back."]],
+ fleet:[["qHall","Tap <b>Hall 2</b>. One search request: matching twins stay bright."],
+          ["qGt","Tap <b>&gt; 120</b>. You can search on live values too."],
+          ["qClr","Tap <b>Clear</b>, or type your own filter. Tap a pump card to inspect it."]]
+};
+const gi={desired:0,offline:0,policy:0,fleet:0};
+function renderGuide(){
+  const g=guides[tab],i=gi[tab],done=i>=g.length,next=TABS[TABS.indexOf(tab)+1];
+  const html=done
+    ?`<span class="n">✓ done</span><span class="txt">${next?"Nice. Go on to the next tab, or play around freely.":"That's all four. Now play around freely."}</span>
+      <span class="nav"><button data-g="prev" aria-label="Previous step">‹</button>${next?`<button class="go" data-g="next-tab">Tab ${TABS.indexOf(tab)+2} →</button>`:`<button data-g="restart">Restart</button>`}</span>`
+    :`<span class="n">Try this ${i+1}/${g.length}</span><span class="txt">${g[i][1]}</span>
+      <span class="nav"><button data-g="prev" ${i===0?"disabled":""} aria-label="Previous step">‹</button><button data-g="next" aria-label="Skip step">›</button></span>`;
+  ["guideTop","guideDock"].forEach(id=>{const el=$(id);el.innerHTML=html;el.classList.toggle("done",done);});
+}
+function guideCheck(a){const g=guides[tab];if(gi[tab]<g.length&&g[gi[tab]][0]===a){gi[tab]++;renderGuide();
+  ["guideTop","guideDock"].forEach(id=>{const el=$(id);el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");});}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-g]");if(!b)return;const k=b.dataset.g,n=guides[tab].length;
+  if(k==="prev")gi[tab]=Math.max(0,gi[tab]-1);if(k==="next")gi[tab]=Math.min(n,gi[tab]+1);if(k==="restart")gi[tab]=0;
+  if(k==="next-tab"){selectTab(TABS[TABS.indexOf(tab)+1]);return;}renderGuide();});
+
 function renderPanel(){
   document.body.dataset.tab=tab;
   $("panel").innerHTML=panels[tab]();
   $("dockActions").innerHTML=dockHTML();
-  $("dockActions").querySelectorAll("[data-act]").forEach(el=>el.addEventListener("click",()=>{acts[el.dataset.act]();}));
-  const on=(id,fn)=>{const el=$(id);if(el)el.addEventListener("click",fn);};
-  on("b150",()=>setTarget(150));on("b100",()=>setTarget(100));on("b180",()=>setTarget(180));
-  on("bNet",()=>setOnline(!P().online));on("bTwin",readTwin);on("bLive",readLive);on("bT2",()=>setTarget(150));
-  on("bT3",()=>setTarget(150));on("bTw3",readTwin);
-  on("rM",()=>setRole("maintenance"));on("rV",()=>setRole("visitor"));
-  const cb=$("cbFlow");if(cb)cb.addEventListener("change",()=>{setGrant(cb.checked);$("dockActions").innerHTML=dockHTML();renderPanel();});
   const q=$("rql");
-  if(q){const run=()=>runFilter(q.value);
+  if(q){const run=()=>{runFilter(q.value);updateButtons();};
     q.addEventListener("change",run);q.addEventListener("keydown",e=>{if(e.key==="Enter")run();});
-    document.querySelectorAll(".presets button").forEach(b=>b.addEventListener("click",()=>runFilter(b.dataset.q)));
     if(filterStr){const n=matches().filter(Boolean).length;$("rqlMsg").textContent=`${n} of 6 twins match`;}}
-  renderFleet();
+  renderFleet();renderGuide();updateButtons();
 }
-document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
-  tab=t.dataset.tab;document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===t));renderPanel();render();requestAnimationFrame(drawWires);
-}));
+function selectTab(t){tab=t;document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x.dataset.tab===t));renderPanel();render();requestAnimationFrame(drawWires);window.scrollTo({top:0,behavior:"smooth"});}
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{if(!runningAct&&!busy)selectTab(t.dataset.tab);}));
 
 /* ---------- ambient: impeller, water, sensor stream ---------- */
 let ang=0,off=0,last=performance.now();
